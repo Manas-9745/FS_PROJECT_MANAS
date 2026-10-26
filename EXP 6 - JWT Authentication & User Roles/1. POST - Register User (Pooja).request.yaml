@@ -1,0 +1,29 @@
+$kind: http-request
+url: "{{base_url}}/auth/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Pooja",
+      "email": "pooja@gmail.com",
+      "password": "password123",
+      "role": "user"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201 Created or 400 User exists", function () {
+          pm.expect([201, 400]).to.include(pm.response.code);
+      });
+      if (pm.response.code === 201) {
+          pm.test("User registered successfully", function () {
+              var jsonData = pm.response.json();
+              pm.expect(jsonData.message).to.eql("User registered successfully");
+              pm.expect(jsonData.user.role).to.eql("user");
+          });
+      }
+    language: text/javascript
+order: 1000

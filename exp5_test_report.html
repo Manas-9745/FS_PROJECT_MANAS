@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXP NO. 5 - Secure REST API Execution Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --surface: #111827;
+      --surface-border: #1f293d;
+      --card-bg: #151d30;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --warning: #f59e0b;
+      --cyan: #06b6d4;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 30px 20px;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    header {
+      background: linear-gradient(135deg, #1e1b4b, #1e293b);
+      border: 1px solid var(--surface-border);
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .badge-exp { background: var(--primary); color: #fff; }
+    h1 { font-size: 26px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .subtitle { color: var(--text-muted); font-size: 14px; }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .stat-label { font-size: 13px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
+    .stat-val { font-size: 28px; font-weight: 700; color: #fff; }
+    .stat-val.passed { color: var(--success); }
+    .stat-val.failed { color: var(--danger); }
+    .test-list { display: flex; flex-direction: column; gap: 16px; }
+    .test-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .test-card.passed { border-left: 4px solid var(--success); }
+    .test-card.failed { border-left: 4px solid var(--danger); }
+    .test-header {
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--surface-border);
+      background: var(--card-bg);
+    }
+    .test-title-area { display: flex; align-items: center; gap: 12px; }
+    .method-pill {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+    .method-GET { background: #0284c7; color: #fff; }
+    .method-POST { background: #16a34a; color: #fff; }
+    .test-title { font-weight: 600; font-size: 15px; color: #fff; }
+    .status-badge {
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .status-badge.PASS { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); }
+    .status-badge.FAIL { background: var(--danger-bg); color: var(--danger); border: 1px solid var(--danger); }
+    .test-body { padding: 20px; font-size: 14px; }
+    .test-meta { display: flex; gap: 24px; margin-bottom: 14px; font-size: 13px; color: var(--text-muted); }
+    .meta-item strong { color: var(--text); }
+    .code-box {
+      background: #060913;
+      border: 1px solid #1a2234;
+      border-radius: 8px;
+      padding: 14px;
+      margin-top: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      overflow-x: auto;
+      color: #93c5fd;
+    }
+    .assertion-list { margin-top: 12px; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+    .assertion-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+    .assertion-item.passed { color: var(--success); }
+    .assertion-item.failed { color: var(--danger); }
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <span class="badge badge-exp">Full Stack Lab - Experiment 5</span>
+      <h1>Secure, Production-Ready RESTful API Test Report</h1>
+      <p class="subtitle">Project: <strong>Lost & Found Portal (FS_prs)</strong> | Tested on: 6/10/2026, 11:29:39 am | Environment: <strong>MongoDB Atlas + Node/Express</strong></p>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Total Tests Executed</span>
+        <span class="stat-val">12</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Tests Passed</span>
+        <span class="stat-val passed">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Tests Failed</span>
+        <span class="stat-val failed">12</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Success Rate</span>
+        <span class="stat-val" style="color: var(--cyan);">0%</span>
+      </div>
+    </div>
+
+    <div class="test-list">
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">1. Base API Health Check (Helmet & Express running)</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 200)</div>
+              <div class="meta-item">Duration: <strong>6ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-POST">POST</span>
+              <span class="test-title">2. Step 15 Test 1: User Registration with Hashed Password</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/register</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 201)</div>
+              <div class="meta-item">Duration: <strong>4ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-POST">POST</span>
+              <span class="test-title">3. Step 13: Input Validation - Reject Invalid Name, Email, and Short Password</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/register</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 400)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-POST">POST</span>
+              <span class="test-title">4. Duplicate User Check - Prevent re-registering existing email</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/register</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 400)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-POST">POST</span>
+              <span class="test-title">5. Step 15 Test 2: User Login & JWT Token Generation</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/login</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 200)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-POST">POST</span>
+              <span class="test-title">6. Step 16 Case 1: Security Test - Wrong Password Rejection</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/login</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 401)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">7. Step 15 Test 3: Access Protected Profile using Bearer Token</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/profile</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 200)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">8. Step 16 Case 2: Security Test - Access Protected API without Token</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/profile</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 401)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">9. Step 16 Case 3: Security Test - Access with Tampered / Invalid Token</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/profile</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 401)</div>
+              <div class="meta-item">Duration: <strong>2ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">10. Step 16 Case 4: Security Test - Access with Expired JWT Token</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/users/profile</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 401)</div>
+              <div class="meta-item">Duration: <strong>4ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">11. Step 16 Case 5: Rate Limiting Middleware Protection (express-rate-limit)</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 200)</div>
+              <div class="meta-item">Duration: <strong>1ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+        <div class="test-card failed">
+          <div class="test-header">
+            <div class="test-title-area">
+              <span class="method-pill method-GET">GET</span>
+              <span class="test-title">12. Project Problem Statement Check: Lost & Found Items API is accessible</span>
+            </div>
+            <span class="status-badge FAIL">FAIL</span>
+          </div>
+          <div class="test-body">
+            <div class="test-meta">
+              <div class="meta-item">Endpoint: <strong>/api/items</strong></div>
+              <div class="meta-item">Status Code: <strong>0</strong> (Expected: 200)</div>
+              <div class="meta-item">Duration: <strong>1ms</strong></div>
+            </div>
+            
+              <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-bottom: 6px;">Assertions:</div>
+              <ul class="assertion-list">
+                <li class="assertion-item failed">✖ Network / Request Error: </li>
+              </ul>
+            
+            <div style="font-weight: 600; font-size: 13px; color: var(--text-muted); margin-top: 12px;">Response Body:</div>
+            <div class="code-box">{
+  "error": ""
+}</div>
+          </div>
+        </div>
+      
+    </div>
+
+    <footer>
+      Experiment 5: Authentication, Authorization, Password Hashing (bcrypt), Rate Limiting, Input Validation & Security Middleware Verified
+    </footer>
+  </div>
+</body>
+</html>

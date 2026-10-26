@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{base_url}}/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "email": "pooja@gmail.com",
+      "password": "password123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("JWT Token returned in response", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.token).to.be.a("string");
+          pm.expect(jsonData.user.role).to.eql("user");
+          pm.collectionVariables.set("user_jwt_token", jsonData.token);
+      });
+    language: text/javascript
+order: 3000

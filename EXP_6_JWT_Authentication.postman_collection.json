@@ -1,0 +1,355 @@
+{
+	"info": {
+		"_postman_id": "exp6-jwt-authentication-lost-and-found",
+		"name": "EXP 6 - JWT Authentication & User Roles (Lost & Found)",
+		"description": "EXP 6: User registration, login, JWT authentication, protected routes, and Admin/User roles demonstration for Lost and Found project.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:5000/api",
+			"type": "string"
+		},
+		{
+			"key": "user_jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "admin_jwt_token",
+			"value": "",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. POST - Register User (Pooja)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created or 400 User exists\", function () {",
+							"    pm.expect([201, 400]).to.include(pm.response.code);",
+							"});",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"User registered successfully\", function () {",
+							"        var jsonData = pm.response.json();",
+							"        pm.expect(jsonData.message).to.eql(\"User registered successfully\");",
+							"        pm.expect(jsonData.user.role).to.eql(\"user\");",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Pooja\",\n  \"email\": \"pooja@gmail.com\",\n  \"password\": \"password123\",\n  \"role\": \"user\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/register",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "register"]
+				}
+			}
+		},
+		{
+			"name": "2. POST - Register Admin (Admin)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201 Created or 400 User exists\", function () {",
+							"    pm.expect([201, 400]).to.include(pm.response.code);",
+							"});",
+							"if (pm.response.code === 201) {",
+							"    pm.test(\"Admin registered successfully\", function () {",
+							"        var jsonData = pm.response.json();",
+							"        pm.expect(jsonData.message).to.eql(\"User registered successfully\");",
+							"        pm.expect(jsonData.user.role).to.eql(\"admin\");",
+							"    });",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"Admin\",\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin123\",\n  \"role\": \"admin\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/register",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "register"]
+				}
+			}
+		},
+		{
+			"name": "3. POST - Login User (Get JWT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"JWT Token returned in response\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.token).to.be.a(\"string\");",
+							"    pm.expect(jsonData.user.role).to.eql(\"user\");",
+							"    pm.collectionVariables.set(\"user_jwt_token\", jsonData.token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"pooja@gmail.com\",\n  \"password\": \"password123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "login"]
+				}
+			}
+		},
+		{
+			"name": "4. GET - Protected User Dashboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Welcome to protected dashboard\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Welcome to the protected dashboard\");",
+							"    pm.expect(jsonData.user.role).to.eql(\"user\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_jwt_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/dashboard",
+					"host": ["{{base_url}}"],
+					"path": ["user", "dashboard"]
+				}
+			}
+		},
+		{
+			"name": "5. GET - Admin Route with User Token (403 Forbidden)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 403 Forbidden for User role\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"pm.test(\"Access denied error message returned\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Access denied. You do not have permission.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{user_jwt_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/admin",
+					"host": ["{{base_url}}"],
+					"path": ["user", "admin"]
+				}
+			}
+		},
+		{
+			"name": "6. POST - Login Admin (Get JWT)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Admin JWT Token received\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.token).to.be.a(\"string\");",
+							"    pm.expect(jsonData.user.role).to.eql(\"admin\");",
+							"    pm.collectionVariables.set(\"admin_jwt_token\", jsonData.token);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"email\": \"admin@gmail.com\",\n  \"password\": \"admin123\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": ["{{base_url}}"],
+					"path": ["auth", "login"]
+				}
+			}
+		},
+		{
+			"name": "7. GET - Admin Route with Admin Token (200 OK)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200 OK for Admin role\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"pm.test(\"Welcome Admin message received\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Welcome Admin! You can access this page.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{admin_jwt_token}}"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/admin",
+					"host": ["{{base_url}}"],
+					"path": ["user", "admin"]
+				}
+			}
+		},
+		{
+			"name": "8. GET - Access Protected Route without Token (401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401 Unauthorized without token\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Access denied error message returned\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Access denied. No token provided.\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/user/dashboard",
+					"host": ["{{base_url}}"],
+					"path": ["user", "dashboard"]
+				}
+			}
+		},
+		{
+			"name": "9. GET - Access Protected Route with Invalid Token (401)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 401 Unauthorized for invalid token\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"pm.test(\"Invalid or expired token error returned\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.message).to.eql(\"Invalid or expired token\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer invalid_tampered_or_expired_jwt_token"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/user/dashboard",
+					"host": ["{{base_url}}"],
+					"path": ["user", "dashboard"]
+				}
+			}
+		}
+	]
+}

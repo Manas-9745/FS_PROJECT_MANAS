@@ -1,0 +1,357 @@
+{
+  "info": {
+    "_postman_id": "e5c102a0-4b2a-4a25-8e7c-8820c7a10505",
+    "name": "EXP 5 - Secure REST API (Lost & Found)",
+    "description": "Experiment 5: Secure, Production-Ready RESTful API with Authentication, Authorization, Bcrypt Password Hashing, JWT Tokens, Input Validation, Rate Limiting, and Security Headers.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "jwt_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "user_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. POST - Register User (Step 15 Test 1)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 201 Created or 400 (if already exists)', function () {",
+              "    pm.expect([201, 400]).to.include(pm.response.code);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "if (pm.response.code === 201) {",
+              "    pm.test('User registered successfully message', function () {",
+              "        pm.expect(jsonData.message).to.eql('User registered successfully');",
+              "        pm.expect(jsonData.userId).to.exist;",
+              "    });",
+              "    pm.collectionVariables.set('user_id', jsonData.userId);",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"student\",\n  \"email\": \"student@gmail.com\",\n  \"password\": \"student123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "register"]
+        },
+        "description": "Step 15 Test 1: Register a new user with bcrypt password hashing."
+      }
+    },
+    {
+      "name": "2. POST - Login User (Step 15 Test 2)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Login successful and JWT token returned', function () {",
+              "    pm.expect(jsonData.message).to.eql('Login successful');",
+              "    pm.expect(jsonData.token).to.exist;",
+              "});",
+              "pm.collectionVariables.set('jwt_token', jsonData.token);",
+              "console.log('Saved JWT Token:', jsonData.token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@gmail.com\",\n  \"password\": \"student123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "login"]
+        },
+        "description": "Step 15 Test 2: Login with email and password to receive JWT token."
+      }
+    },
+    {
+      "name": "3. GET - Access Protected Profile (Step 15 Test 3)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Profile returns user details without password', function () {",
+              "    pm.expect(jsonData.email).to.eql('student@gmail.com');",
+              "    pm.expect(jsonData.role).to.eql('user');",
+              "    pm.expect(jsonData.password).to.be.undefined;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{jwt_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users/profile",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "profile"]
+        },
+        "description": "Step 15 Test 3: Access protected profile route using Bearer JWT token."
+      }
+    },
+    {
+      "name": "4. POST - Security Case 1: Wrong Password",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 Unauthorized', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Error message is Invalid email or password', function () {",
+              "    pm.expect(jsonData.message).to.eql('Invalid email or password');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"student@gmail.com\",\n  \"password\": \"wrong123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/login",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "login"]
+        },
+        "description": "Step 16 Case 1: Attempt login with invalid password."
+      }
+    },
+    {
+      "name": "5. GET - Security Case 2: No Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 Unauthorized', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Error message is Access denied', function () {",
+              "    pm.expect(jsonData.message).to.eql('Access denied');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/users/profile",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "profile"]
+        },
+        "description": "Step 16 Case 2: Access protected route without authorization header."
+      }
+    },
+    {
+      "name": "6. GET - Security Case 3: Invalid Token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 401 Unauthorized', function () {",
+              "    pm.response.to.have.status(401);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Error message is Invalid or expired token', function () {",
+              "    pm.expect(jsonData.message).to.eql('Invalid or expired token');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer this_is_a_fake_tampered_token_string"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/profile",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "profile"]
+        },
+        "description": "Step 16 Case 3: Access protected route with invalid/tampered token."
+      }
+    },
+    {
+      "name": "7. POST - Input Validation (Step 13)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 400 Bad Request', function () {",
+              "    pm.response.to.have.status(400);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Validation errors returned', function () {",
+              "    pm.expect(jsonData.errors).to.exist;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"\",\n  \"email\": \"not-a-valid-email\",\n  \"password\": \"123\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/users/register",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "register"]
+        },
+        "description": "Step 13: Input validation check - rejects missing name, invalid email, short password."
+      }
+    },
+    {
+      "name": "8. GET - Rate Limiter & Helmet Health Check",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Security rate limit header present', function () {",
+              "    pm.expect(pm.response.headers.has('RateLimit-Limit') || pm.response.headers.has('x-ratelimit-limit')).to.be.true;",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/",
+          "host": ["{{base_url}}"],
+          "path": [""]
+        },
+        "description": "Base route to verify express-rate-limit headers and Helmet security headers."
+      }
+    },
+    {
+      "name": "9. GET - Lost & Found Items (Project PS)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Status code is 200 OK', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "var jsonData = pm.response.json();",
+              "pm.test('Items array returned from MongoDB Atlas', function () {",
+              "    pm.expect(jsonData).to.be.an('array');",
+              "    pm.expect(jsonData.length).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/items",
+          "host": ["{{base_url}}"],
+          "path": ["api", "items"]
+        },
+        "description": "Lost and Found Project Problem Statement integration check."
+      }
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{base_url}}/profile"
+method: GET
+headers:
+  Authorization: Bearer {{jwt_token}}
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200 OK", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Profile returned with user details", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.email).to.eql("student@gmail.com");
+          pm.expect(jsonData.role).to.eql("user");
+      });
+      pm.test("Password is excluded from profile response", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.password).to.be.undefined;
+      });
+    language: text/javascript
+order: 3000

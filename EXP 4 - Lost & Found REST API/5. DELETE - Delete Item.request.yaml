@@ -1,0 +1,15 @@
+$kind: http-request
+url: "{{base_url}}/{{item_id}}"
+method: DELETE
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Success message returned", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.message).to.include("deleted");
+      });
+    language: text/javascript
+order: 5000

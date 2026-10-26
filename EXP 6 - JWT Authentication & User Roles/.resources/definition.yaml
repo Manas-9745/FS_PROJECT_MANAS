@@ -1,0 +1,6 @@
+$kind: collection
+description: EXP 6 - JWT Authentication & User Roles (Register, Login, Protected Routes & Admin/User Roles) for Lost & Found Project
+variables:
+  base_url: http://localhost:5000/api
+  user_jwt_token: ""
+  admin_jwt_token: ""

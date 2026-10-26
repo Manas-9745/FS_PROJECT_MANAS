@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EXP 6 - JWT Authentication & User Roles Test Report</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #6366f1;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: var(--bg);
+      color: var(--text-main);
+      padding: 2rem;
+      line-height: 1.5;
+    }
+    .container { max-width: 1100px; margin: 0 auto; }
+    header {
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+    }
+    h1 { font-size: 2rem; font-weight: 700; color: #fff; margin-bottom: 0.5rem; }
+    .subtitle { color: var(--text-muted); font-size: 1rem; }
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+    .badge-exp { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: 1px solid #6366f1; }
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .metric-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      text-align: center;
+    }
+    .metric-val { font-size: 2rem; font-weight: 700; margin-bottom: 0.25rem; }
+    .metric-lbl { color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .passed-text { color: var(--success); }
+    .failed-text { color: var(--danger); }
+    .test-list { display: flex; flex-direction: column; gap: 1rem; }
+    .test-item {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1.25rem;
+      transition: border-color 0.2s;
+    }
+    .test-item.passed { border-left: 5px solid var(--success); }
+    .test-item.failed { border-left: 5px solid var(--danger); }
+    .test-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+    .test-title { font-weight: 600; font-size: 1.1rem; }
+    .test-status {
+      font-weight: 700;
+      font-size: 0.875rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 0.375rem;
+    }
+    .status-passed { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+    .status-failed { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+    .test-details {
+      background: #090d16;
+      border-radius: 0.5rem;
+      padding: 0.75rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.825rem;
+      color: #cbd5e1;
+      overflow-x: auto;
+    }
+    .test-details pre { white-space: pre-wrap; word-break: break-all; margin: 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>EXP NO. 6 Verification Report</h1>
+      <div class="subtitle">Authentication & User Roles with JWT (Lost & Found System)</div>
+      <span class="badge badge-exp">EXP 6: Full JWT Lifecycle Verified</span>
+      <p style="margin-top: 0.5rem; color: #94a3b8; font-size: 0.85rem;">Generated on: 26/10/2026, 10:13:18 am</p>
+    </header>
+
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-val">11</div>
+        <div class="metric-lbl">Total Tests</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val passed-text">11</div>
+        <div class="metric-lbl">Passed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val failed-text">0</div>
+        <div class="metric-lbl">Failed</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-val" style="color: #6366f1;">100%</div>
+        <div class="metric-lbl">Success Rate</div>
+      </div>
+    </div>
+
+    <div class="test-list">
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 1: Root API Endpoint Check</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Verify server is responsive and running EXP 6 API</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 200,
+  "response": "JWT Authentication API is running"
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 2: Register User Account (Role: User)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Register student user 'Pooja' with role 'user' and bcrypt hash</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 400,
+  "response": {
+    "message": "User already exists"
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 3: Register Admin Account (Role: Admin)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Register administrator account with role 'admin' and bcrypt hash</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 400,
+  "response": {
+    "message": "User already exists"
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 4: User Login & JWT Generation</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Verify credentials, hash comparison, and sign JWT token with role 'user'</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 200,
+  "message": "Login successful",
+  "tokenPreview": "eyJhbGciOiJIUzI1NiIsInR5c...",
+  "user": {
+    "id": "6acd10a1bd6aa7cbf14c7373",
+    "name": "Pooja",
+    "email": "pooja@gmail.com",
+    "role": "user",
+    "lastLogin": "2026-10-26T04:43:17.585Z",
+    "loginCount": 2
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 5: Access Protected Dashboard (User Token)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">User with valid JWT accesses /api/user/dashboard</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 200,
+  "response": {
+    "message": "Welcome to the protected dashboard",
+    "user": {
+      "id": "6acd10a1bd6aa7cbf14c7373",
+      "role": "user",
+      "iat": 1792989797,
+      "exp": 1792993397
+    }
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 6: Role Authorization Guard (User Attempting Admin Route)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">User with role 'user' attempts GET /api/user/admin, correctly blocked with 403 Forbidden</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 403,
+  "response": {
+    "message": "Access denied. You do not have permission."
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 7: Admin Login & JWT Generation</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Verify admin credentials, sign JWT token with role 'admin'</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 200,
+  "message": "Login successful",
+  "tokenPreview": "eyJhbGciOiJIUzI1NiIsInR5c...",
+  "user": {
+    "id": "6acd10a1bd6aa7cbf14c7374",
+    "name": "Admin",
+    "email": "admin@gmail.com",
+    "role": "admin",
+    "lastLogin": "2026-10-26T04:43:17.815Z",
+    "loginCount": 3
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 8: Access Admin Route (Admin Token)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Admin with role 'admin' accesses GET /api/user/admin, successfully authorized</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 200,
+  "response": {
+    "message": "Welcome Admin! You can access this page."
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 9: Access Without Token (401 Unauthorized)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Protected route rejects request when Authorization header is absent</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 401,
+  "response": {
+    "message": "Access denied. No token provided."
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 10: Access With Invalid Token (401 Unauthorized)</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Protected route rejects tampered or expired JWT token</p>
+          <div class="test-details">
+            <pre>{
+  "statusCode": 401,
+  "response": {
+    "message": "Invalid or expired token"
+  }
+}</pre>
+          </div>
+        </div>
+      
+        <div class="test-item passed">
+          <div class="test-header">
+            <div class="test-title">Step 11: Live MongoDB Atlas Cloud Verification</div>
+            <div class="test-status status-passed">PASSED</div>
+          </div>
+          <p style="color: #94a3b8; font-size: 0.9rem; margin-bottom: 0.5rem;">Verify stored users and items live in the MongoDB Atlas cloud cluster</p>
+          <div class="test-details">
+            <pre>{
+  "databaseName": "test",
+  "totalUsersInAtlas": 4,
+  "totalLostFoundItemsInAtlas": 10,
+  "users": [
+    {
+      "name": "Admin Officer",
+      "email": "admin@lostfound.edu",
+      "role": "admin",
+      "hashedPasswordPreview": "$2b$10$MLDdu2v2..."
+    },
+    {
+      "name": "Pooja",
+      "email": "pooja@gmail.com",
+      "role": "user",
+      "hashedPasswordPreview": "$2b$10$eZq35KMT..."
+    },
+    {
+      "name": "Admin",
+      "email": "admin@gmail.com",
+      "role": "admin",
+      "hashedPasswordPreview": "$2b$10$PDkYVuJA..."
+    },
+    {
+      "name": "manas",
+      "email": "msp@company.com",
+      "role": "user",
+      "hashedPasswordPreview": "$2b$10$TkcAatvV..."
+    }
+  ]
+}</pre>
+          </div>
+        </div>
+      
+    </div>
+  </div>
+</body>
+</html>

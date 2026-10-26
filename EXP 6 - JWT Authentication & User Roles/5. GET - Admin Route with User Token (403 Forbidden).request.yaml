@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{base_url}}/user/admin"
+method: GET
+headers:
+  Authorization: "Bearer {{user_jwt_token}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 403 Forbidden for User role", function () {
+          pm.response.to.have.status(403);
+      });
+      pm.test("Access denied error message returned", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.message).to.eql("Access denied. You do not have permission.");
+      });
+    language: text/javascript
+order: 5000

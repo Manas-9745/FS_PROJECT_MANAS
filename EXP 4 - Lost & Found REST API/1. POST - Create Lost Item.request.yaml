@@ -1,0 +1,33 @@
+$kind: http-request
+url: "{{base_url}}"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "Apple AirPods Pro",
+      "description": "White AirPods Pro in a case with a small scratch on the front. Lost during morning lecture.",
+      "category": "Electronics",
+      "status": "Lost",
+      "location": "Science Building Room 201"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 201", function () {
+          pm.response.to.have.status(201);
+      });
+      pm.test("Response has _id", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData._id).to.exist;
+          pm.collectionVariables.set("item_id", jsonData._id);
+          console.log("Saved item_id:", jsonData._id);
+      });
+      pm.test("Item name is correct", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.name).to.eql("Apple AirPods Pro");
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{base_url}}/{{item_id}}"
+method: GET
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 200", function () {
+          pm.response.to.have.status(200);
+      });
+      pm.test("Item ID matches", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData._id).to.eql(pm.collectionVariables.get("item_id"));
+      });
+      pm.test("Item has required fields", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.name).to.exist;
+          pm.expect(jsonData.status).to.exist;
+          pm.expect(jsonData.location).to.exist;
+      });
+    language: text/javascript
+order: 3000

@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{base_url}}/profile"
+method: GET
+headers:
+  Authorization: Bearer invalid_or_tampered_token_string
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 401 Unauthorized", function () {
+          pm.response.to.have.status(401);
+      });
+      pm.test("Error message is Invalid or expired token", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.message).to.eql("Invalid or expired token");
+      });
+    language: text/javascript
+order: 6000

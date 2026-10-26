@@ -1,0 +1,25 @@
+$kind: http-request
+url: "{{base_url}}/register"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "name": "",
+      "email": "not-an-email",
+      "password": "123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status code is 400 Bad Request", function () {
+          pm.response.to.have.status(400);
+      });
+      pm.test("Response contains validation error messages", function () {
+          var jsonData = pm.response.json();
+          pm.expect(jsonData.errors).to.exist;
+      });
+    language: text/javascript
+order: 7000

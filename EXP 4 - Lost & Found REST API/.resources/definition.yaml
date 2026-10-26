@@ -1,0 +1,5 @@
+$kind: collection
+description: CRUD API collection for Lost & Found project using MongoDB + Mongoose
+variables:
+  base_url: http://localhost:5000/api/items
+  item_id: ""

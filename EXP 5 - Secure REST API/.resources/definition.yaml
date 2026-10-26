@@ -1,0 +1,6 @@
+$kind: collection
+description: EXP 5 - Secure REST API collection with JWT Authentication, Security & Validation for Lost & Found project
+variables:
+  base_url: http://localhost:5000/api/users
+  jwt_token: ""
+  user_id: ""
