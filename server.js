@@ -21,12 +21,17 @@ const { initSocket } = require("./socket/socketHandler"); // EXP 8
 
 const app = express();
 
-// Step 5: Security Middleware
-app.use(helmet());
+app.set("trust proxy", 1);
+
 app.use(
   cors({
     origin: true,
     credentials: true,
+  })
+);
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 app.use(express.json());
