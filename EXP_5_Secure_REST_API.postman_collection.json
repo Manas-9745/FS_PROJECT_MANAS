@@ -60,8 +60,14 @@
         },
         "url": {
           "raw": "{{base_url}}/api/users/register",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "register"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "register"
+          ]
         },
         "description": "Step 15 Test 1: Register a new user with bcrypt password hashing."
       }
@@ -102,10 +108,16 @@
         },
         "url": {
           "raw": "{{base_url}}/api/users/login",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "login"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "login"
+          ]
         },
-        "description": "Step 15 Test 2: Login with email and password to receive JWT token."
+        "description": " Login with email and password to receive JWT token."
       }
     },
     {
@@ -144,8 +156,14 @@
         "header": [],
         "url": {
           "raw": "{{base_url}}/api/users/profile",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "profile"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "profile"
+          ]
         },
         "description": "Step 15 Test 3: Access protected profile route using Bearer JWT token."
       }
@@ -183,8 +201,14 @@
         },
         "url": {
           "raw": "{{base_url}}/api/users/login",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "login"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "login"
+          ]
         },
         "description": "Step 16 Case 1: Attempt login with invalid password."
       }
@@ -213,8 +237,14 @@
         "header": [],
         "url": {
           "raw": "{{base_url}}/api/users/profile",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "profile"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "profile"
+          ]
         },
         "description": "Step 16 Case 2: Access protected route without authorization header."
       }
@@ -248,8 +278,14 @@
         ],
         "url": {
           "raw": "{{base_url}}/api/users/profile",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "profile"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "profile"
+          ]
         },
         "description": "Step 16 Case 3: Access protected route with invalid/tampered token."
       }
@@ -287,8 +323,14 @@
         },
         "url": {
           "raw": "{{base_url}}/api/users/register",
-          "host": ["{{base_url}}"],
-          "path": ["api", "users", "register"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "users",
+            "register"
+          ]
         },
         "description": "Step 13: Input validation check - rejects missing name, invalid email, short password."
       }
@@ -316,8 +358,12 @@
         "header": [],
         "url": {
           "raw": "{{base_url}}/",
-          "host": ["{{base_url}}"],
-          "path": [""]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            ""
+          ]
         },
         "description": "Base route to verify express-rate-limit headers and Helmet security headers."
       }
@@ -347,8 +393,13 @@
         "header": [],
         "url": {
           "raw": "{{base_url}}/api/items",
-          "host": ["{{base_url}}"],
-          "path": ["api", "items"]
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "api",
+            "items"
+          ]
         },
         "description": "Lost and Found Project Problem Statement integration check."
       }
